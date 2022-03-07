@@ -291,6 +291,8 @@ fork(void)
 
   safestrcpy(np->name, p->name, sizeof(p->name));
 
+  np->mask = p->mask;//mask复制到子进程
+
   pid = np->pid;
 
   np->state = RUNNABLE;
@@ -692,4 +694,17 @@ procdump(void)
     printf("%d %s %s", p->pid, state, p->name);
     printf("\n");
   }
+}
+
+uint64
+free_proc(void)
+{
+  uint64 n = 0;
+  struct proc *p;
+  for(p = proc; p < &proc[NPROC]; p++) {
+    acquire(&p->lock);
+    if(p->state != UNUSED) n++;
+    release(&p->lock);
+  }
+  return n;
 }
