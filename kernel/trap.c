@@ -79,7 +79,12 @@ usertrap(void)
   // give up the CPU if this is a timer interrupt.
   if(which_dev == 2)
     yield();
-
+  if(which_dev == 2){//在出现计时器中断时操纵进程的警报滴答
+    if(p->ticks > 0 && --p->remainticks == 0){
+      p->trapframe_bak=*p->trapframe;
+      p->trapframe->epc=(uint64)p->handler;//handler存储用户函数，需要返回用户态才能调用
+    }
+  }
   usertrapret();
 }
 
