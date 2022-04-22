@@ -1,0 +1,1 @@
+where id the diffrence bewteen thread and process? 
